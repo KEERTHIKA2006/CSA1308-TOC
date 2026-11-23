@@ -1,0 +1,677 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDA Grammar Validator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f6fc;
+    color: #1e293b;
+}
+
+header {
+    background: #172554;
+    color: white;
+    padding: 28px 8%;
+}
+
+header h1 {
+    margin: 0 0 10px;
+    font-size: 28px;
+}
+
+header p {
+    margin: 0;
+    color: #cbd5e1;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 12px #0000000b;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 21px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 170px;
+    padding: 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.7;
+    resize: vertical;
+}
+
+button {
+    border: none;
+    padding: 12px 18px;
+    margin: 10px 8px 0 0;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.primary {
+    background: #2563eb;
+    color: white;
+}
+
+.secondary {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.note {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.status {
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.valid {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.invalid {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+ul {
+    padding-left: 22px;
+    line-height: 1.8;
+}
+
+pre {
+    background: #0f172a;
+    color: #dbeafe;
+    padding: 18px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+th {
+    background: #eff6ff;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 23px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    table {
+        font-size: 13px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>PDA-Driven Grammar Validator</h1>
+    <p>
+        Legal Contract Drafting | Theory of Computation Capstone
+        <br>
+        Context-Free Grammar and Pushdown Automata
+    </p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>1. Enter Contract Text</h2>
+
+        <p class="note">
+            Enter a legal contract clause or use one of the sample
+            contracts below. Click Validate Contract to check its
+            grammatical and structural correctness.
+        </p>
+
+        <textarea id="contractText"
+        placeholder="Enter your legal contract text here..."></textarea>
+
+        <br>
+
+        <button class="primary" onclick="validateContract()">
+            Validate Contract
+        </button>
+
+        <button class="secondary" onclick="loadSample()">
+            Load Valid Sample
+        </button>
+
+        <button class="secondary" onclick="loadInvalid()">
+            Load Invalid Sample
+        </button>
+
+        <button class="secondary" onclick="clearAll()">
+            Clear
+        </button>
+    </div>
+
+    <div class="card">
+        <h2>2. Validation Result</h2>
+
+        <div id="result">
+            <p class="note">
+                Your validation result will appear here.
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>3. PDA Stack Operations</h2>
+
+        <p class="note">
+            The PDA uses a stack to check whether brackets and
+            parentheses are properly opened and closed.
+            The stack follows Last In, First Out (LIFO).
+        </p>
+
+        <pre id="stackOutput">
+Stack operations will appear here after validation.
+        </pre>
+    </div>
+
+    <div class="card">
+        <h2>4. CFG Grammar Rules</h2>
+
+        <p>
+            The following simplified grammar rules are used by
+            this demonstration website.
+        </p>
+
+        <table>
+            <tr>
+                <th>Rule</th>
+                <th>Grammar</th>
+            </tr>
+
+            <tr>
+                <td>Rule 1</td>
+                <td>Contract → Clause</td>
+            </tr>
+
+            <tr>
+                <td>Rule 2</td>
+                <td>Clause → Party Obligation Object</td>
+            </tr>
+
+            <tr>
+                <td>Rule 3</td>
+                <td>Obligation → shall | must | may | will</td>
+            </tr>
+
+            <tr>
+                <td>Rule 4</td>
+                <td>Condition → If Condition, Clause</td>
+            </tr>
+
+            <tr>
+                <td>Rule 5</td>
+                <td>NestedClause → ( Clause )</td>
+            </tr>
+        </table>
+
+        <p class="note">
+            These are simplified demonstration rules, not a complete
+            grammar for all legal contracts.
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>5. How the System Works</h2>
+
+        <ol>
+            <li>Collects the contract text from the user.</li>
+            <li>Cleans unnecessary spaces and formatting.</li>
+            <li>Converts the text into individual tokens.</li>
+            <li>Checks brackets and nested structures using a PDA stack.</li>
+            <li>Checks clause structure using predefined CFG patterns.</li>
+            <li>Displays the validation result and detected errors.</li>
+        </ol>
+    </div>
+
+</div>
+
+<footer>
+    TOC Capstone Project | PDA-Driven Grammar Validator
+    <br>
+    Grammar and structural checking only. Not legal advice.
+</footer>
+
+<script>
+
+// ------------------------------------------
+// MODULE 1: INPUT PROCESSING
+// ------------------------------------------
+
+function cleanText(text) {
+    return text
+        .replace(/\r\n/g, "\n")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\n+/g, "\n")
+        .trim();
+}
+
+
+// ------------------------------------------
+// MODULE 1: TOKENIZATION
+// ------------------------------------------
+
+function tokenize(text) {
+    return text.match(
+        /[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)*|[()[\]{}.,;:!?]/g
+    ) || [];
+}
+
+
+// ------------------------------------------
+// MODULE 2: PDA STACK VALIDATION
+// ------------------------------------------
+
+function checkBrackets(text) {
+
+    const stack = [];
+    const operations = [];
+
+    const opening = {
+        "(": ")",
+        "[": "]",
+        "{": "}"
+    };
+
+    const closing = [")", "]", "}"];
+
+    let errors = [];
+
+    for (let i = 0; i < text.length; i++) {
+
+        const character = text[i];
+
+        if (opening[character]) {
+
+            stack.push(character);
+
+            operations.push(
+                "Read '" + character +
+                "' → PUSH " + character +
+                " → Stack: " + stack.join(" ")
+            );
+
+        } else if (closing.includes(character)) {
+
+            if (stack.length === 0) {
+
+                errors.push(
+                    "Unexpected closing bracket '" +
+                    character + "' at position " + (i + 1)
+                );
+
+                operations.push(
+                    "Read '" + character +
+                    "' → ERROR: Stack is empty"
+                );
+
+            } else {
+
+                const top = stack[stack.length - 1];
+
+                if (opening[top] === character) {
+
+                    stack.pop();
+
+                    operations.push(
+                        "Read '" + character +
+                        "' → POP " + top +
+                        " → Stack: " +
+                        (stack.length ? stack.join(" ") : "Empty")
+                    );
+
+                } else {
+
+                    errors.push(
+                        "Mismatched bracket '" +
+                        character + "' at position " + (i + 1)
+                    );
+
+                    operations.push(
+                        "Read '" + character +
+                        "' → ERROR: Expected '" +
+                        opening[top] + "'"
+                    );
+                }
+            }
+        }
+    }
+
+    if (stack.length > 0) {
+
+        errors.push(
+            "Missing closing bracket for '" +
+            stack[stack.length - 1] + "'"
+        );
+
+        operations.push(
+            "End of input → ERROR: Stack is not empty"
+        );
+
+    } else if (errors.length === 0) {
+
+        operations.push(
+            "End of input → Stack is empty → ACCEPT"
+        );
+    }
+
+    return {
+        valid: errors.length === 0,
+        errors: errors,
+        operations: operations
+    };
+}
+
+
+// ------------------------------------------
+// MODULE 2: CFG GRAMMAR VALIDATION
+// ------------------------------------------
+
+function checkGrammar(text) {
+
+    const errors = [];
+
+    // Split text into individual contract clauses.
+    const clauses = text
+        .split(/[.!?;]+/)
+        .map(clause => clause.trim())
+        .filter(clause => clause.length > 0);
+
+    if (clauses.length === 0) {
+        return {
+            valid: false,
+            errors: ["No valid contract clause found."]
+        };
+    }
+
+    clauses.forEach((clause, index) => {
+
+        // Rule 1: Basic obligation clause.
+        // Example:
+        // The Tenant shall pay the rent.
+
+        const basicPattern =
+            /^the\s+[a-z][a-z0-9\s'-]*\s+(shall|must|may|will)\s+[a-z][a-z'-]*(?:\s+.+)?$/i;
+
+        // Rule 2: Conditional obligation clause.
+        // Example:
+        // If payment is delayed, the Tenant shall pay a fee.
+
+        const conditionalPattern =
+            /^if\s+.+,\s*the\s+[a-z][a-z0-9\s'-]*\s+(shall|must|may|will)\s+[a-z][a-z'-]*(?:\s+.+)?$/i;
+
+        // Rule 3: Clause with a nested parenthetical condition.
+        // Example:
+        // The Tenant shall pay the rent (if payment is delayed).
+
+        const nestedPattern =
+            /^the\s+[a-z][a-z0-9\s'-]*\s+(shall|must|may|will)\s+[a-z][a-z'-]*(?:\s+.+)?\s*\(.+\)$/i;
+
+        const isValid =
+            basicPattern.test(clause) ||
+            conditionalPattern.test(clause) ||
+            nestedPattern.test(clause);
+
+        if (!isValid) {
+
+            errors.push(
+                "Clause " + (index + 1) +
+                ": Incorrect grammatical structure. " +
+                "Check the party, obligation, and required action."
+            );
+        }
+    });
+
+    return {
+        valid: errors.length === 0,
+        errors: errors
+    };
+}
+
+
+// ------------------------------------------
+// MODULE 3: MAIN VALIDATION
+// ------------------------------------------
+
+function validateContract() {
+
+    const input =
+        document.getElementById("contractText").value;
+
+    const result =
+        document.getElementById("result");
+
+    const stackOutput =
+        document.getElementById("stackOutput");
+
+    // Input validation.
+    if (input.trim() === "") {
+
+        result.innerHTML =
+            '<div class="status invalid">' +
+            'Please enter contract text before validation.' +
+            '</div>';
+
+        stackOutput.textContent =
+            "No input provided.";
+
+        return;
+    }
+
+    // Text cleaning.
+    const cleanedText = cleanText(input);
+
+    // Tokenization.
+    const tokens = tokenize(cleanedText);
+
+    // PDA validation.
+    const pdaResult = checkBrackets(cleanedText);
+
+    // CFG validation.
+    const cfgResult = checkGrammar(cleanedText);
+
+    const overallValid =
+        pdaResult.valid && cfgResult.valid;
+
+    let html = "";
+
+    if (overallValid) {
+
+        html +=
+            '<div class="status valid">' +
+            'VALID CONTRACT STRUCTURE' +
+            '</div>';
+
+        html +=
+            '<p>The contract follows the predefined grammar ' +
+            'rules and has properly matched brackets.</p>';
+
+    } else {
+
+        html +=
+            '<div class="status invalid">' +
+            'INVALID CONTRACT STRUCTURE' +
+            '</div>';
+
+        html += "<p>Errors detected:</p><ul>";
+
+        pdaResult.errors.forEach(error => {
+            html += "<li>" + escapeHTML(error) + "</li>";
+        });
+
+        cfgResult.errors.forEach(error => {
+            html += "<li>" + escapeHTML(error) + "</li>";
+        });
+
+        html += "</ul>";
+    }
+
+    // Display cleaned text.
+    html += "<h3>Processed Contract</h3>";
+
+    html +=
+        "<p>" + escapeHTML(cleanedText) + "</p>";
+
+    // Display tokens.
+    html += "<h3>Tokens</h3>";
+
+    html +=
+        "<p>" + escapeHTML(tokens.join(" | ")) + "</p>";
+
+    // Display CFG result.
+    html += "<h3>CFG Parser Result</h3>";
+
+    html +=
+        "<p>" +
+        (cfgResult.valid
+            ? "All clauses follow the predefined grammar."
+            : "One or more clauses do not follow the grammar.") +
+        "</p>";
+
+    // Display PDA result.
+    html += "<h3>PDA Stack Result</h3>";
+
+    html +=
+        "<p>" +
+        (pdaResult.valid
+            ? "All brackets are correctly matched."
+            : "Bracket errors were detected.") +
+        "</p>";
+
+    result.innerHTML = html;
+
+    // Display PDA operations.
+    stackOutput.textContent =
+        pdaResult.operations.join("\n");
+}
+
+
+// ------------------------------------------
+// SECURITY: SAFE TEXT DISPLAY
+// ------------------------------------------
+
+function escapeHTML(text) {
+
+    return text.replace(/[&<>"']/g, function(character) {
+
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        };
+
+        return entities[character];
+    });
+}
+
+
+// ------------------------------------------
+// SAMPLE CONTRACTS
+// ------------------------------------------
+
+function loadSample() {
+
+    document.getElementById("contractText").value =
+        "The Tenant shall pay the rent.\n" +
+        "The Landlord shall maintain the property.\n" +
+        "If payment is delayed, the Tenant shall pay a fee.";
+}
+
+function loadInvalid() {
+
+    document.getElementById("contractText").value =
+        "The Tenant shall.\n" +
+        "The Landlord maintain the property.\n" +
+        "The Tenant shall pay the rent (if payment is delayed.";
+}
+
+function clearAll() {
+
+    document.getElementById("contractText").value = "";
+
+    document.getElementById("result").innerHTML =
+        '<p class="note">Your validation result will appear here.</p>';
+
+    document.getElementById("stackOutput").textContent =
+        "Stack operations will appear here after validation.";
+}
+
+</script>
+
+</body>
+</html>
